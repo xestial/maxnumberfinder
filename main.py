@@ -1,73 +1,85 @@
-import sys
 import re
+import sys
 
-def get_numbers():
-    numbers = []
-    choice = input("Enter numbers (comma-separated): ")
-    if choice.lower() == "file":
-        filename = input("Enter file name: ")
-        try:
-            with open(filename, "r") as file:
-                content = file.read()
-                numbers = re.findall(r"[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?", content)
-        except FileNotFoundError:
-            print(f"File '{filename}' not found.")
-            sys.exit(1)
+def parse_input(input_string):
+    numbers = re.findall(r'[-+]?\d*\.\d+|\d+|\d+e[-+]?\d+', input_string.replace(',', ' '))
+    return [float(num) for num in numbers]
+
+def format_number(number):
+    if number.is_integer():
+        return str(int(number))
+    elif abs(number) >= 1000 or abs(number) < 0.001:
+        return "{:.2e}".format(number)
     else:
-        numbers = re.findall(r"[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?", choice)
-    
-    return [float(num[0]) if num[2] else int(num[0]) for num in numbers]
+        return "{:.2f}".format(number)
 
-def find_min(numbers):
+def insert_numbers(numbers, all_numbers):
+    all_numbers.extend(numbers)
+
+def read_numbers_from_file(filename):
+    try:
+        with open(filename, 'r') as file:
+            content = file.read()
+            numbers = parse_input(content)
+            return numbers
+    except FileNotFoundError:
+        print("File not found.")
+        return []
+    except IOError:
+        print("Error reading the file.")
+        return []
+
+def find_minimum_number(numbers):
     return min(numbers)
 
-def find_max(numbers):
+def find_maximum_number(numbers):
     return max(numbers)
 
-def remove_decimal(number):
-    formatted_number = f"{number:g}"
-    if "." in formatted_number:
-        formatted_number = formatted_number.rstrip("0").rstrip(".")
-    return formatted_number
-
 def print_menu():
-    print("============== MENU ==============")
-    print("1. Enter numbers")
+    print("----- Menu -----")
+    print("1. Enter numbers manually")
     print("2. Load numbers from a file")
-    print("3. Find minimum value")
-    print("4. Find maximum value")
+    print("3. Find the minimum number")
+    print("4. Find the maximum number")
     print("5. Exit")
-    print("==================================")
+    print("----------------")
+
+def get_input():
+    return input("Enter your choice: ")
+
+def process_choice(choice, all_numbers):
+    if choice == '1':
+        input_numbers = input("Enter numbers (separated by commas or spaces): ")
+        numbers = parse_input(input_numbers)
+        insert_numbers(numbers, all_numbers)
+    elif choice == '2':
+        filename = input("Enter filename: ")
+        numbers = read_numbers_from_file(filename)
+        insert_numbers(numbers, all_numbers)
+    elif choice == '3':
+        if all_numbers:
+            min_number = find_minimum_number(all_numbers)
+            print("Minimum number: ", format_number(min_number))
+        else:
+            print("No numbers found.")
+    elif choice == '4':
+        if all_numbers:
+            max_number = find_maximum_number(all_numbers)
+            print("Maximum number: ", format_number(max_number))
+        else:
+            print("No numbers found.")
+    elif choice == '5':
+        sys.exit()
+    else:
+        print("Invalid choice. Please try again.")
 
 def main():
-    numbers = []
+    all_numbers = []
+
     while True:
         print_menu()
-        choice = input("Enter your choice: ")
-        
-        if choice == "1":
-            numbers = get_numbers()
-            print("Numbers updated successfully.")
-        elif choice == "2":
-            numbers = get_numbers()
-            print("Numbers loaded from file successfully.")
-        elif choice == "3":
-            if numbers:
-                minimum = find_min(numbers)
-                print(f"Minimum value: {remove_decimal(minimum)}")
-            else:
-                print("No numbers found. Please enter or load numbers.")
-        elif choice == "4":
-            if numbers:
-                maximum = find_max(numbers)
-                print(f"Maximum value: {remove_decimal(maximum)}")
-            else:
-                print("No numbers found. Please enter or load numbers.")
-        elif choice == "5":
-            print("Exiting...")
-            sys.exit(0)
-        else:
-            print("Invalid choice. Please try again.")
+        choice = get_input()
+        process_choice(choice, all_numbers)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
