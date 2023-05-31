@@ -30,11 +30,11 @@ Max Number Finder is a Python script that allows you to find the minimum and max
 # Usage
 ### Choose one of the options from the menu by entering the corresponding number and pressing Enter:
 
-Enter numbers manually: You will be prompted to enter numbers manually, separated by commas or spaces.
-Load numbers from a file: You will be prompted to enter the filename of the text file containing the numbers.
-Find the minimum number: The script will display the minimum number from the entered numbers, if any.
-Find the maximum number: The script will display the maximum number from the entered numbers, if any.
-Exit: The script will terminate.
+1. Enter numbers manually: You will be prompted to enter numbers manually, separated by commas or spaces. 
+2. Load numbers from a file: You will be prompted to enter the filename of the text file containing the numbers.
+3. Find the minimum number: The script will display the minimum number from the entered numbers, if any.
+4. Find the maximum number: The script will display the maximum number from the entered numbers, if any.
+5. Exit: The script will terminate.
 Follow the prompts and instructions provided by the script.
 
 # Examples
